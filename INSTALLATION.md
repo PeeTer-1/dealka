@@ -1,5 +1,9 @@
 # Dealka Marketplace - Installation Guide
 
+git remote add origin https://github.com/PeeTer-1/dealka.git
+git branch -M main
+git push -u origin main
+
 ## 📋 ข้อกำหนดระบบ
 
 - PHP 7.4 หรือสูงกว่า
