@@ -1,8 +1,19 @@
 # Dealka Marketplace - Installation Guide
 
-git remote add origin https://github.com/PeeTer-1/dealka.git
+เปิด Terminal / CMD แล้วพิมพ์:
+
+git init
+git add .
+git commit -m "first commit"
 git branch -M main
+git remote add origin https://github.com/USERNAME/REPO.git
 git push -u origin main
+
+
+หลังจากนั้นเวลาแก้โค้ด:
+git add .
+git commit -m "แก้หน้า login"
+git push
 
 ## 📋 ข้อกำหนดระบบ
 
