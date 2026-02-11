@@ -41,31 +41,112 @@ function get_product($product_id) {
 /**
  * Get all approved products with pagination
  */
-function get_products($page = 1, $limit = 12, $category = null) {
+function get_products($page = 1, $limit = 12, $category = null, $keyword = null, $sort = 'newest') {
     global $pdo;
 
     try {
         $offset = ($page - 1) * $limit;
         $query = "SELECT p.*, u.username as seller_name FROM products p LEFT JOIN users u ON p.user_id = u.id WHERE p.status = 'approved' AND p.status != 'sold'";
+        $params = [];
         
         if ($category) {
             $query .= " AND p.category = ?";
+            $params[] = $category;
         }
 
-        $query .= " ORDER BY p.created_at DESC LIMIT ? OFFSET ?";
+        if (!empty($keyword)) {
+            $query .= " AND (p.title LIKE ? OR p.description LIKE ? OR u.username LIKE ?)";
+            $searchTerm = '%' . $keyword . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+        }
+
+        switch ($sort) {
+            case 'price_asc':
+                $query .= " ORDER BY p.price ASC, p.created_at DESC";
+                break;
+            case 'price_desc':
+                $query .= " ORDER BY p.price DESC, p.created_at DESC";
+                break;
+            case 'oldest':
+                $query .= " ORDER BY p.created_at ASC";
+                break;
+            default:
+                $query .= " ORDER BY p.created_at DESC";
+                break;
+        }
+
+        $query .= " LIMIT ? OFFSET ?";
+
+        $params[] = $limit;
+        $params[] = $offset;
 
         $stmt = $pdo->prepare($query);
-        
-        if ($category) {
-            $stmt->execute([$category, $limit, $offset]);
-        } else {
-            $stmt->execute([$limit, $offset]);
-        }
+        $stmt->execute($params);
 
         return $stmt->fetchAll();
     } catch (Exception $e) {
         error_log("Get products error: " . $e->getMessage());
         return [];
+    }
+}
+
+/**
+ * Count approved products with filters
+ */
+function count_products($category = null, $keyword = null) {
+    global $pdo;
+
+    try {
+        $query = "SELECT COUNT(*) FROM products p LEFT JOIN users u ON p.user_id = u.id WHERE p.status = 'approved' AND p.status != 'sold'";
+        $params = [];
+
+        if ($category) {
+            $query .= " AND p.category = ?";
+            $params[] = $category;
+        }
+
+        if (!empty($keyword)) {
+            $query .= " AND (p.title LIKE ? OR p.description LIKE ? OR u.username LIKE ?)";
+            $searchTerm = '%' . $keyword . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+        }
+
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    } catch (Exception $e) {
+        error_log("Count products error: " . $e->getMessage());
+        return 0;
+    }
+}
+
+/**
+ * Basic marketplace stats for homepage
+ */
+function get_marketplace_stats() {
+    global $pdo;
+
+    try {
+        $approvedProducts = (int)$pdo->query("SELECT COUNT(*) FROM products WHERE status = 'approved' AND status != 'sold'")->fetchColumn();
+        $activeSellers = (int)$pdo->query("SELECT COUNT(DISTINCT user_id) FROM products WHERE status IN ('approved', 'pending', 'sold')")->fetchColumn();
+        $successfulDeals = (int)$pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'completed'")->fetchColumn();
+
+        return [
+            'approved_products' => $approvedProducts,
+            'active_sellers' => $activeSellers,
+            'successful_deals' => $successfulDeals
+        ];
+    } catch (Exception $e) {
+        error_log("Get marketplace stats error: " . $e->getMessage());
+        return [
+            'approved_products' => 0,
+            'active_sellers' => 0,
+            'successful_deals' => 0
+        ];
     }
 }
 
