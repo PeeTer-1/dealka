@@ -7,7 +7,8 @@ require_once __DIR__ . '/auth.php';
         <div class="header-content">
             <div class="logo">
                 <a href="<?php echo BASE_URL; ?>index.php">
-                    <h1>🛍️ Dealka</h1>
+                   <!-- ใส่ชื่อไฟล์รูปของคุณตรงนี้ logo.png -->
+                    <img src="<?php echo BASE_URL; ?>assets/images/logo.png" alt="Dealka Logo">
                 </a>
             </div>
 
@@ -19,7 +20,8 @@ require_once __DIR__ . '/auth.php';
                     <a href="<?php echo BASE_URL; ?>pages/seller/manage_products.php">📦 สินค้า</a>
                     <a href="<?php echo BASE_URL; ?>pages/user/withdraw.php">💰 ถอนเงิน</a>
                     <?php if (is_admin()): ?>
-                        <a href="<?php echo BASE_URL; ?>pages/admin/dashboard.php" style="color: var(--danger-color); font-weight: bold;">⚙️ Admin</a>
+                        <!-- ใส่ class="nav-link-admin" เพื่อให้ CSS ทำงาน -->
+                        <a href="<?php echo BASE_URL; ?>pages/admin/dashboard.php" class="nav-link-admin">⚙️ Admin</a>
                     <?php endif; ?>
                     <a href="<?php echo BASE_URL; ?>pages/auth/logout.php">🚪 ออก</a>
                 <?php else: ?>

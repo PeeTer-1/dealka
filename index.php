@@ -25,7 +25,8 @@ $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
     <div class="container">
         <div class="hero">
-            <h1>🛍️ Dealka Marketplace</h1>
+            
+            <h1> Dealka Marketplace</h1>
             <p>ซื้อขายอย่างปลอดภัย ด้วยระบบ Escrow</p>
             <?php if (!is_logged_in()): ?>
                 <p>

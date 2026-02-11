@@ -41,7 +41,7 @@ $csrf_token = generate_csrf_token();
 <body>
     <div class="container">
         <div class="auth-box">
-            <h1>🛍️ Dealka Marketplace</h1>
+            <h1> Dealka Marketplace</h1>
             <h2>เข้าสู่ระบบ</h2>
 
             <?php if ($error): ?>
