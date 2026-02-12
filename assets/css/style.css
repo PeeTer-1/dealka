@@ -538,6 +538,22 @@ h3 { font-size: 1.2rem; color: #333; margin-bottom: 0.5rem; font-weight: 600; }
    RESPONSIVE DESIGN (Mobile Optimized)
    ========================= */
 
+
+@media (max-width: 1024px) {
+    .discover-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .discover-submit-wrap {
+        grid-column: span 2;
+    }
+
+    .discover-submit-wrap .btn {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 0 1rem;
@@ -572,6 +588,38 @@ h3 { font-size: 1.2rem; color: #333; margin-bottom: 0.5rem; font-weight: 600; }
     .discover-grid {
         grid-template-columns: 1fr;
         gap: 0.75rem;
+    }
+
+    .discover-submit-wrap {
+        grid-column: auto;
+    }
+
+    .active-filter-summary {
+        align-items: stretch;
+        gap: 0.45rem;
+    }
+
+    .active-filter-summary .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .filter-chip {
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .category-filter {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.3rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .category-filter .btn {
+        flex: 0 0 auto;
     }
 
     .feature-grid {
