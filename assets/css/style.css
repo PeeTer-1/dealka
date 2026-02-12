@@ -610,3 +610,227 @@ h3 { font-size: 1.2rem; color: #333; margin-bottom: 0.5rem; font-weight: 600; }
     width: auto;  /* ให้ความกว้างปรับอัตโนมัติตามสัดส่วนรูป */
     object-fit: contain; /* ทำให้รูปไม่เบี้ย */
 }
+
+/* --- Mobile-first marketplace home --- */
+.mobile-home {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 1rem 0.75rem 6rem;
+}
+
+.mobile-search-form {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ececf1;
+    border-radius: 18px;
+    padding: 0.15rem 0.25rem 0.15rem 0.75rem;
+    margin: 0.5rem 0 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.mobile-search-form input {
+    border: none;
+    width: 100%;
+    font-size: 1rem;
+    background: transparent;
+}
+
+.mobile-search-form input:focus {
+    outline: none;
+}
+
+.mobile-search-form button {
+    border: none;
+    border-radius: 14px;
+    padding: 0.4rem 0.6rem;
+    background: #f1f2f8;
+    cursor: pointer;
+}
+
+.mobile-banner-card {
+    display: block;
+    position: relative;
+    height: 160px;
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.mobile-banner-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.05);
+}
+
+.mobile-banner-card span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.85rem;
+    color: #fff;
+    font-weight: 700;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.66) 100%);
+}
+
+.mobile-banner-dots {
+    text-align: center;
+    margin: 0.45rem 0 1.2rem;
+}
+
+.mobile-banner-dots span {
+    width: 6px;
+    height: 6px;
+    background: #ced2da;
+    display: inline-block;
+    border-radius: 50%;
+    margin: 0 3px;
+}
+
+.mobile-banner-dots span.active {
+    width: 9px;
+    height: 9px;
+    background: #656d7b;
+}
+
+.mobile-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.25rem 0 0.65rem;
+}
+
+.mobile-section-title h2,
+.mobile-section-title h3 {
+    margin: 0;
+    font-size: 1.65rem;
+}
+
+.mobile-section-title h3 {
+    font-size: 1.25rem;
+}
+
+.mobile-section-title a {
+    color: #db7f8d;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.mobile-categories {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.mobile-category-pill {
+    text-decoration: none;
+    color: #333;
+    text-align: center;
+}
+
+.mobile-category-pill span {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #ececf1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.mobile-category-pill small {
+    display: block;
+    font-size: 0.71rem;
+    line-height: 1.2;
+}
+
+.mobile-product-section {
+    margin-bottom: 1.2rem;
+}
+
+.mobile-product-row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(140px, 1fr);
+    gap: 0.65rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+}
+
+.mobile-product-card {
+    border: 1px solid #ececf1;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #1d2027;
+    overflow: hidden;
+    background: #fff;
+}
+
+.mobile-product-card img,
+.mobile-product-card .product-placeholder {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-bottom: 1px solid #f1f1f4;
+}
+
+.mobile-product-info {
+    padding: 0.45rem 0.55rem 0.65rem;
+}
+
+.mobile-product-info h4 {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    min-height: 2rem;
+}
+
+.mobile-product-info p {
+    margin: 0.3rem 0 0;
+    font-weight: 700;
+    color: #d95b63;
+}
+
+.mobile-bottom-nav {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: min(430px, 100%);
+    background: #fff;
+    border-top: 1px solid #ececf1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 0.45rem;
+}
+
+.mobile-bottom-nav a {
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.5rem;
+    opacity: 0.65;
+}
+
+.mobile-bottom-nav a.active {
+    opacity: 1;
+}
+
+body.home-modern {
+    background: #f4f4f7;
+}
+
+body.home-modern .container.mobile-home {
+    background: #f4f4f7;
+}
+
+body.home-modern .header,
+body.home-modern .footer {
+    display: none;
+}
