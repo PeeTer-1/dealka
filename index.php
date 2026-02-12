@@ -16,7 +16,7 @@ $limit = 12;
 $products = get_products($page, $limit, $category, $keyword, $sort);
 $totalProducts = count_products($category, $keyword);
 $totalPages = max(1, (int)ceil($totalProducts / $limit));
-$marketStats = get_marketplace_stats();
+$showCategoryRows = empty($category);
 
 if ($page > $totalPages) {
     $page = $totalPages;
@@ -42,23 +42,8 @@ $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
     <div class="container">
         <div class="hero">
-            <h1> Dealka Marketplace</h1>
-            <p>ซื้อขายอย่างปลอดภัย ด้วยระบบ Escrow พร้อมประสบการณ์ใช้งานที่เร็วและง่ายกว่าเดิม</p>
-
-            <div class="hero-stats">
-                <div class="hero-stat-item">
-                    <strong><?php echo number_format($marketStats['approved_products']); ?></strong>
-                    <span>สินค้าพร้อมขาย</span>
-                </div>
-                <div class="hero-stat-item">
-                    <strong><?php echo number_format($marketStats['active_sellers']); ?></strong>
-                    <span>ผู้ขายแอคทีฟ</span>
-                </div>
-                <div class="hero-stat-item">
-                    <strong><?php echo number_format($marketStats['successful_deals']); ?></strong>
-                    <span>ดีลสำเร็จ</span>
-                </div>
-            </div>
+            <h1>Dealka Marketplace</h1>
+            <p>ค้นหาสินค้าได้ง่ายขึ้นในหน้าเดียว พร้อมรายการสินค้าแยกตามหมวดหมู่แบบแนวนอน</p>
 
             <?php if (!is_logged_in()): ?>
                 <p>
@@ -73,7 +58,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
         </div>
 
         <section class="discover-section">
-            <h2>🏪 ค้นหาสินค้าที่ใช่สำหรับคุณ</h2>
+            <h2>ค้นหาและกรองสินค้า</h2>
             <form method="GET" action="" class="discover-form">
                 <div class="discover-grid">
                     <div class="form-group">
@@ -123,29 +108,72 @@ $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
         <?php endif; ?>
  
         <?php if (count($products) > 0): ?>
-            <div class="products-grid">
-                <?php foreach ($products as $product): ?>
-                    <div class="product-card">
-                        <?php if ($product['image_path']): ?>
-                            <img src="<?php echo BASE_URL; ?>uploads/products/<?php echo htmlspecialchars($product['image_path']); ?>" alt="<?php echo htmlspecialchars($product['title']); ?>">
-                        <?php else: ?>
-                            <div class="product-placeholder">📷</div>
-                        <?php endif; ?>
+            <?php if ($showCategoryRows && count($categories) > 0): ?>
+                <?php foreach ($categories as $cat): ?>
+                    <?php $categoryProducts = get_products(1, 8, $cat, $keyword, $sort); ?>
+                    <?php if (count($categoryProducts) === 0) continue; ?>
+                    <section class="category-row-section">
+                        <div class="category-row-header">
+                            <h3><?php echo htmlspecialchars($cat); ?></h3>
+                            <?php
+                                $catQuery = [];
+                                if (!empty($keyword)) {
+                                    $catQuery['q'] = $keyword;
+                                }
+                                if ($sort !== 'newest') {
+                                    $catQuery['sort'] = $sort;
+                                }
+                                $catQuery['category'] = $cat;
+                            ?>
+                            <a href="<?php echo BASE_URL; ?>index.php?<?php echo http_build_query($catQuery); ?>" class="btn btn-small btn-secondary">ดูทั้งหมด</a>
+                        </div>
+                        <div class="products-row">
+                            <?php foreach ($categoryProducts as $product): ?>
+                                <article class="product-card product-card-row">
+                                    <?php if ($product['image_path']): ?>
+                                        <img src="<?php echo BASE_URL; ?>uploads/products/<?php echo htmlspecialchars($product['image_path']); ?>" alt="<?php echo htmlspecialchars($product['title']); ?>">
+                                    <?php else: ?>
+                                        <div class="product-placeholder">📷</div>
+                                    <?php endif; ?>
 
-                        <div class="product-info">
-                            <h3><?php echo htmlspecialchars($product['title']); ?></h3>
-                            <p class="price"><?php echo format_currency($product['price']); ?></p>
-                            <p class="seller">ผู้ขาย: <?php echo htmlspecialchars($product['seller_name']); ?></p>
+                                    <div class="product-info">
+                                        <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+                                        <p class="price"><?php echo format_currency($product['price']); ?></p>
+                                        <p class="seller">ผู้ขาย: <?php echo htmlspecialchars($product['seller_name']); ?></p>
+                                        <div class="product-actions">
+                                            <a href="pages/product.php?id=<?php echo $product['id']; ?>" class="btn btn-primary btn-block">ดูรายละเอียด</a>
+                                        </div>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="products-grid">
+                    <?php foreach ($products as $product): ?>
+                        <div class="product-card">
+                            <?php if ($product['image_path']): ?>
+                                <img src="<?php echo BASE_URL; ?>uploads/products/<?php echo htmlspecialchars($product['image_path']); ?>" alt="<?php echo htmlspecialchars($product['title']); ?>">
+                            <?php else: ?>
+                                <div class="product-placeholder">📷</div>
+                            <?php endif; ?>
 
-                            <div class="product-actions">
-                                <a href="pages/product.php?id=<?php echo $product['id']; ?>" class="btn btn-primary btn-block">ดูรายละเอียด</a>
+                            <div class="product-info">
+                                <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+                                <p class="price"><?php echo format_currency($product['price']); ?></p>
+                                <p class="seller">ผู้ขาย: <?php echo htmlspecialchars($product['seller_name']); ?></p>
+
+                                <div class="product-actions">
+                                    <a href="pages/product.php?id=<?php echo $product['id']; ?>" class="btn btn-primary btn-block">ดูรายละเอียด</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
 
-            <?php if ($totalPages > 1): ?>
+            <?php if (!$showCategoryRows && $totalPages > 1): ?>
                 <div class="pagination">
                     <?php
                         $paginationBase = [];
@@ -174,20 +202,6 @@ $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
             </div>
         <?php endif; ?>
 
-        <section class="feature-grid">
-            <div class="feature-card">
-                <h3>🔒 ปลอดภัยด้วยระบบ Escrow</h3>
-                <p>เงินจะถูกเก็บไว้ในระบบจนกว่าผู้ซื้อจะยืนยันรับสินค้า ลดความเสี่ยงทั้งสองฝ่าย</p>
-            </div>
-            <div class="feature-card">
-                <h3>⚡ กระบวนการชำระเงินชัดเจน</h3>
-                <p>ตรวจสอบสลิปโดยแอดมิน พร้อมสถานะออเดอร์แบบ step-by-step ติดตามได้ง่าย</p>
-            </div>
-            <div class="feature-card">
-                <h3>💸 โปร่งใสเรื่องค่าธรรมเนียม</h3>
-                <p>ผู้ขายจ่าย 3% ต่อการขาย และถอนเงินเพียง 1% (ขั้นต่ำ 1,000 LAK)</p>
-            </div>
-        </section>
     </div>
 
     <?php include 'includes/footer.php'; ?>
