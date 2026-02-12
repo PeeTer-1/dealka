@@ -2,12 +2,18 @@
 require_once 'includes/auth.php';
 require_once 'includes/functions.php';
 
-$page = intval($_GET['page'] ?? 1);
+$page = max(1, intval($_GET['page'] ?? 1));
 $category = sanitize($_GET['category'] ?? '');
 $keyword = trim(sanitize($_GET['q'] ?? ''));
 $sort = sanitize($_GET['sort'] ?? 'newest');
 
 $allowedSorts = ['newest', 'oldest', 'price_asc', 'price_desc'];
+$sortLabels = [
+    'newest' => 'ใหม่ล่าสุด',
+    'oldest' => 'เก่าสุด',
+    'price_asc' => 'ราคาต่ำไปสูง',
+    'price_desc' => 'ราคาสูงไปต่ำ'
+];
 if (!in_array($sort, $allowedSorts, true)) {
     $sort = 'newest';
 }
@@ -25,9 +31,11 @@ if ($page > $totalPages) {
 
 // Get categories
 global $pdo;
-$stmt = $pdo->prepare("SELECT DISTINCT category FROM products WHERE status = 'approved' AND category IS NOT NULL ORDER BY category");
+$stmt = $pdo->prepare("SELECT DISTINCT category FROM products WHERE status = 'approved' AND category IS NOT NULL AND TRIM(category) != '' ORDER BY category");
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+$hasActiveFilters = !empty($keyword) || !empty($category) || $sort !== 'newest';
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -81,6 +89,17 @@ $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
                         <input type="text" name="q" id="q" value="<?php echo htmlspecialchars($keyword); ?>" placeholder="ชื่อสินค้า คำอธิบาย หรือชื่อผู้ขาย">
                     </div>
                     <div class="form-group">
+                        <label for="category">หมวดหมู่</label>
+                        <select name="category" id="category">
+                            <option value="">ทุกหมวดหมู่</option>
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?php echo htmlspecialchars($cat); ?>" <?php echo $category === $cat ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($cat); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="sort">เรียงลำดับ</label>
                         <select name="sort" id="sort">
                             <option value="newest" <?php echo $sort === 'newest' ? 'selected' : ''; ?>>ใหม่ล่าสุด</option>
@@ -94,6 +113,22 @@ $categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
                     </div>
                 </div>
             </form>
+
+            <?php if ($hasActiveFilters): ?>
+                <div class="active-filter-summary">
+                    <span>กำลังกรองผลลัพธ์:</span>
+                    <?php if (!empty($keyword)): ?>
+                        <span class="filter-chip">คำค้น: <?php echo htmlspecialchars($keyword); ?></span>
+                    <?php endif; ?>
+                    <?php if (!empty($category)): ?>
+                        <span class="filter-chip">หมวดหมู่: <?php echo htmlspecialchars($category); ?></span>
+                    <?php endif; ?>
+                    <?php if ($sort !== 'newest'): ?>
+                        <span class="filter-chip">การเรียง: <?php echo htmlspecialchars($sortLabels[$sort] ?? $sort); ?></span>
+                    <?php endif; ?>
+                    <a href="<?php echo BASE_URL; ?>index.php" class="btn btn-small btn-secondary">ล้างตัวกรอง</a>
+                </div>
+            <?php endif; ?>
         </section>
 
         <h2>รายการสินค้า (<?php echo number_format($totalProducts); ?> รายการ)</h2>
